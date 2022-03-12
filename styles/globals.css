@@ -23,3 +23,8 @@ a {
 {
   color: white !important;
 }
+[role='menu']
+{
+  color: white !important;
+  background: black;
+}

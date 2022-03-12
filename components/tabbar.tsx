@@ -8,8 +8,9 @@ import { closest } from "../utils/logic";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import SortIcon from "@mui/icons-material/Sort";
-import Button from '@mui/material/Button';
-
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -53,28 +54,26 @@ export default function BasicTabs({ rides, userCode }: any) {
     else return -1;
   });
 
-  const upcomingRides = rides.filter((ride: any) => {
-    console.log("date1: " + new Date(Date.parse(ride.date)));
-    console.log("date2: " + new Date());
-    console.log();
-
-    console.log(new Date(Date.parse(ride.date)) > new Date());
-
-    return new Date(Date.parse(ride.date)) > new Date();
-  });
-  const pastRides = rides.filter((ride: any) => {
-    console.log("date1: " + new Date(Date.parse(ride.date)));
-    console.log("date2: " + new Date());
-    console.log();
-
-    console.log(new Date(Date.parse(ride.date)) < new Date());
-    return new Date(Date.parse(ride.date)) < new Date();
-  });
+  const upcomingRides = rides.filter(
+    (ride: any) => new Date(Date.parse(ride.date)) > new Date()
+  );
+  const pastRides = rides.filter(
+    (ride: any) => new Date(Date.parse(ride.date)) < new Date()
+  );
 
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -96,20 +95,48 @@ export default function BasicTabs({ rides, userCode }: any) {
             sx={{ textTransform: "none", color: "#ffffff" }}
           />
           <Tab
-            label="Upcoming rides"
+            label={`Upcoming rides ( ${upcomingRides.length} )`}
             {...a11yProps(1)}
             sx={{ textTransform: "none", color: "#ffffff" }}
           />
           <Tab
-            label="Past rides"
+            label={`Past rides ( ${pastRides.length} ) `}
             {...a11yProps(2)}
             sx={{ textTransform: "none", color: "#ffffff" }}
           />
 
-          <Button sx={{ml:"auto",display:"flex",alignItems:"center",color:"white",textTransform: "none"}}>
+          <Button
+            onClick={handleClick}
+            sx={{
+              ml: "auto",
+              display: "flex",
+              alignItems: "center",
+              color: "white",
+              textTransform: "none",
+            }}
+          >
             <SortIcon />
-            <span style={{marginLeft:"10px"}}>Filters</span>
+            <span style={{ marginLeft: "10px" }}>Filters</span>
           </Button>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <MenuItem onClick={handleClose}>Profile</MenuItem>
+            <MenuItem onClick={handleClose}>My account</MenuItem>
+            <MenuItem onClick={handleClose}>Logout</MenuItem>
+          </Menu>
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
